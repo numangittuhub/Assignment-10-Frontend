@@ -1,2 +1,12 @@
 @import "tailwindcss";
 @plugin "daisyui";
+
+.nav-link {
+  padding: 6px 10px;
+  border-radius: 6px;
+}
+
+.nav-link.active {
+  background-color: #065f46; /* darker green */
+  font-weight: 600;
+}
