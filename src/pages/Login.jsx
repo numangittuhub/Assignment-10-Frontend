@@ -1,36 +1,39 @@
 import { useState, useContext } from "react";
-import { useNavigate } from "react-router-dom";
-import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../firebase/firebase.config"; 
 import { AuthContext } from "../provider/AuthProvider";
+import { useNavigate } from "react-router-dom";
 
 export default function Login() {
-  const navigate = useNavigate();
-  const { setUser } = useContext(AuthContext); // Context থেকে setUser পাবো
-
+  const { signInUser, signInWithGoogle } = useContext(AuthContext);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [errorMessage, setErrorMessage] = useState(""); 
+  const [errorMessage, setErrorMessage] = useState("");
+  const navigate = useNavigate();
 
+  // Email/Password Login
   const handleSubmit = async (e) => {
     e.preventDefault();
     setErrorMessage("");
-
     try {
-      const result = await signInWithEmailAndPassword(auth, email, password);
+      const result = await signInUser(email, password);
       console.log("User Logged In:", result.user);
-      
-      // Context এর user update
-      setUser(result.user);
-
-      // Successful toast / alert
       alert("Login Successful!");
-
-      // Home page redirect
-      navigate("/");
-      
+      navigate("/"); // Login successful -> go to home page
     } catch (error) {
       console.error("Login Error:", error.message);
+      setErrorMessage(error.message);
+    }
+  };
+
+  // Google Login
+  const handleGoogleLogin = async () => {
+    setErrorMessage("");
+    try {
+      const result = await signInWithGoogle();
+      console.log("Google Login Success:", result.user);
+      alert("Google Login Successful!");
+      navigate("/"); // Redirect after login
+    } catch (error) {
+      console.error("Google Login Error:", error.message);
       setErrorMessage(error.message);
     }
   };
@@ -39,7 +42,7 @@ export default function Login() {
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="bg-white p-8 rounded-2xl shadow-lg w-full max-w-md">
         <h2 className="text-3xl font-bold text-center mb-6">Login</h2>
-        
+
         {errorMessage && (
           <div className="bg-red-100 text-red-600 p-2 mb-4 rounded text-center text-sm">
             {errorMessage}
@@ -84,6 +87,13 @@ export default function Login() {
             Login
           </button>
         </form>
+
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full mt-3 bg-red-500 text-white py-3 rounded-xl font-semibold hover:opacity-90 transition duration-200"
+        >
+          Login with Google
+        </button>
 
         <p className="text-center mt-4">
           Don’t have an account?
