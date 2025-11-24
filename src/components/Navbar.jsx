@@ -1,64 +1,45 @@
-import { Link, NavLink } from "react-router-dom";
-import { useState } from "react";
-import { Menu, X, Sun, Moon } from "lucide-react";
+import { Link } from "react-router-dom";
+import { useContext } from "react";
+import { AuthContext } from "../provider/AuthProvider";
 
-const Navbar = ({ theme, setTheme }) => {
-  const [open, setOpen] = useState(false);
+export default function Navbar() {
+  const { user, logOut } = useContext(AuthContext);
 
-  const toggleTheme = () => {
-    setTheme(prev => (prev === "light" ? "dark" : "light"));
+  const handleLogout = () => {
+    logOut()
+      .then(() => console.log("User Logged Out"))
+      .catch((error) => console.error(error));
   };
 
-  const navLinks = (
-    <>
-      <NavLink to="/" className="nav-link">Home</NavLink>
-      <NavLink to="/issues" className="nav-link">All Issues</NavLink>
-      <NavLink to="/add-issue" className="nav-link">Add Issue</NavLink>
-      <NavLink to="/my-issues" className="nav-link">My Issues</NavLink>
-      <NavLink to="/my-contribution" className="nav-link">My Contribution</NavLink>
-      <NavLink to="/login" className="nav-link">Login</NavLink>
-    </>
-  );
-
   return (
-    <nav className="bg-green-700 dark:bg-gray-900 text-white dark:text-gray-200">
-      <div className="max-w-6xl mx-auto flex justify-between items-center py-4 px-4">
-        
-        {/* Logo */}
-        <Link to="/" className="text-2xl font-bold">Clean Community</Link>
+    <nav className="bg-white shadow-md py-4">
+      <div className="max-w-7xl mx-auto flex justify-between items-center px-4">
+        <h1 className="text-2xl font-bold text-primary">GreenNest</h1>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-6 items-center">
-          {navLinks}
+        <div className="flex items-center gap-4">
+          <Link to="/" className="hover:text-primary">Home</Link>
+          <Link to="/issues" className="hover:text-primary">All Issues</Link>
 
-          {/* Theme Toggle Button */}
-          <button onClick={toggleTheme} className="p-2 rounded-lg bg-green-800 dark:bg-gray-700">
-            {theme === "light" ? <Moon size={20} /> : <Sun size={20} />}
-          </button>
+          {user ? (
+            <>
+              <span className="text-sm font-medium text-gray-700">
+                {user.email}
+              </span>
+              <button
+                onClick={handleLogout}
+                className="px-4 py-1 bg-red-500 text-white rounded-lg"
+              >
+                Logout
+              </button>
+            </>
+          ) : (
+            <>
+              <Link to="/login" className="hover:text-primary">Login</Link>
+              <Link to="/register" className="hover:text-primary">Register</Link>
+            </>
+          )}
         </div>
-
-        {/* Mobile Menu Button */}
-        <button className="md:hidden" onClick={() => setOpen(!open)}>
-          {open ? <X size={28} /> : <Menu size={28} />}
-        </button>
       </div>
-
-      {/* Mobile Dropdown */}
-      {open && (
-        <div className="md:hidden bg-green-600 dark:bg-gray-800 flex flex-col gap-3 px-5 py-4">
-          {navLinks}
-
-          {/* Toggle button in mobile */}
-          <button
-            onClick={toggleTheme}
-            className="p-2 rounded-lg bg-green-800 dark:bg-gray-700 w-28"
-          >
-            {theme === "light" ? "Dark Mode" : "Light Mode"}
-          </button>
-        </div>
-      )}
     </nav>
   );
-};
-
-export default Navbar;
+}
