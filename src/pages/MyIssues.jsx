@@ -1,5 +1,5 @@
 import { useEffect, useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../provider/AuthProvider";
 import IssueCard from "../components/IssueCard";
 
 export default function MyIssues() {
@@ -7,11 +7,11 @@ export default function MyIssues() {
   const [issues, setIssues] = useState([]);
 
   useEffect(() => {
-    const fetchMyIssues = async () => {
-      if (!user) return;
+    if (!user) return;
 
+    const fetchMyIssues = async () => {
       try {
-        const res = await fetch(`http://localhost:5000/api/issues/my/${user.uid}`);
+        const res = await fetch(`http://localhost:5000/api/issues/my/${user._id}`);
         const data = await res.json();
         setIssues(data);
       } catch (err) {

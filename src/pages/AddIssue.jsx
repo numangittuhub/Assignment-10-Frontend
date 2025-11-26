@@ -1,8 +1,9 @@
 import { useState, useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
+import { AuthContext } from "../provider/AuthProvider";
 
 export default function AddIssue() {
-  const { user } = useContext(AuthContext); // logged-in user
+  const { user } = useContext(AuthContext);
+
   const [title, setTitle] = useState("");
   const [category, setCategory] = useState("");
   const [location, setLocation] = useState("");
@@ -32,7 +33,7 @@ export default function AddIssue() {
           description,
           amount,
           image,
-          userId: user.uid,
+          userId: user?._id, // <- updated (uid not needed)
         }),
       });
 
@@ -40,7 +41,6 @@ export default function AddIssue() {
 
       if (res.ok) {
         setMessage("Issue added successfully!");
-        // Clear form
         setTitle("");
         setCategory("");
         setLocation("");
@@ -63,58 +63,25 @@ export default function AddIssue() {
       {message && <p className="mb-4 text-center text-green-600">{message}</p>}
 
       <form className="space-y-3" onSubmit={handleSubmit}>
-        <input
-          type="text"
-          placeholder="Title"
-          value={title}
-          onChange={(e) => setTitle(e.target.value)}
-          required
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Category"
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          required
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Location"
-          value={location}
-          onChange={(e) => setLocation(e.target.value)}
-          required
-          className="w-full border p-2 rounded"
-        />
-        <textarea
-          placeholder="Description"
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          required
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="number"
-          placeholder="Budget Amount"
-          value={amount}
-          onChange={(e) => setAmount(e.target.value)}
-          required
-          className="w-full border p-2 rounded"
-        />
-        <input
-          type="text"
-          placeholder="Image URL"
-          value={image}
-          onChange={(e) => setImage(e.target.value)}
-          required
-          className="w-full border p-2 rounded"
-        />
+        <input type="text" placeholder="Title" className="w-full border p-2 rounded"
+          value={title} onChange={(e) => setTitle(e.target.value)} required />
 
-        <button
-          type="submit"
-          className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500"
-        >
+        <input type="text" placeholder="Category" className="w-full border p-2 rounded"
+          value={category} onChange={(e) => setCategory(e.target.value)} required />
+
+        <input type="text" placeholder="Location" className="w-full border p-2 rounded"
+          value={location} onChange={(e) => setLocation(e.target.value)} required />
+
+        <textarea placeholder="Description" className="w-full border p-2 rounded"
+          value={description} onChange={(e) => setDescription(e.target.value)} required />
+
+        <input type="number" placeholder="Budget Amount" className="w-full border p-2 rounded"
+          value={amount} onChange={(e) => setAmount(e.target.value)} required />
+
+        <input type="text" placeholder="Image URL" className="w-full border p-2 rounded"
+          value={image} onChange={(e) => setImage(e.target.value)} required />
+
+        <button type="submit" className="w-full bg-green-600 text-white py-2 rounded hover:bg-green-500">
           Add Issue
         </button>
       </form>
